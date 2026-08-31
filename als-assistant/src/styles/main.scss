@@ -1,0 +1,9 @@
+@layer base {
+  code, pre, .v-code {
+    font-family: var(--font-mono);
+  }
+
+  .v-btn {
+    border-radius: 10px;
+  }
+}

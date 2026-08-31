@@ -1,0 +1,51 @@
+services:
+  # PHP Application Container
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: als-assistant_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    networks:
+      - als-assistant-net
+
+  # Web Server (Nginx)
+  webserver:
+    image: nginx:alpine
+    container_name: als-assistant_webserver
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - als-assistant-net
+    depends_on:
+      - app
+
+  # Database (MySQL)
+  mysql:
+    image: mysql:8.0
+    container_name: als-assistant
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - als-assistant-net
+
+networks:
+  als-assistant-net:
+    driver: bridge
+
+volumes:
+  mysqldata:
+    driver: local

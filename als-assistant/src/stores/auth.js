@@ -13,8 +13,6 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token,
     currentUser: (state) => state.user,
-    authError: (state) => state.error,
-    isLoading: (state) => state.loading,
   },
 
   actions: {
@@ -22,62 +20,43 @@ export const useAuthStore = defineStore('auth', {
       this.user = user
       this.token = token
       this.error = null
-
-      localStorage.setItem('user', JSON.stringify(user))
-      localStorage.setItem('token', token)
     },
 
     clearSession() {
       this.user = null
       this.token = null
       this.error = null
-
-      localStorage.removeItem('user')
-      localStorage.removeItem('token')
     },
 
     async login(credentials) {
       this.loading = true
       this.error = null
 
-      const { data } = await loginUser(credentials)
-
-      if (!data.status) {
-        throw new Error('Invalid email or password')
-      }
-
-      this.setSession(data.data.user, data.data.access_token)
-      await router.push('/dashboard')
-      this.loading = false
-    },
-
-    async signup(userData) {
-      this.loading = true
-      this.error = null
-
       try {
-        const { data } = await registerUser(userData)
+        const { data } = await loginUser(credentials)
 
-        if (!response.ok) {
-          throw new Error('Failed to create account')
+        if (!data.status) {
+          throw new Error(data.message || 'Invalid credentials')
         }
 
         this.setSession(data.data.user, data.data.access_token)
         await router.push('/dashboard')
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
+        this.error = err.response?.data?.message || err.message || 'Login failed'
+        throw this.error
+      } finally {
+        this.loading = false
       }
-      this.loading = false
     },
 
     async logout() {
-      try {
-        await router.push('/login')
-      } catch (err) {
-        console.warn('Backend logout failed or token was already invalid')
-      } finally {
-        this.clearSession()
-      }
+      this.clearSession()
+      await router.push('/login')
     },
+  },
+
+  persist: {
+    key: 'auth',
+    storage: localStorage,
   },
 })

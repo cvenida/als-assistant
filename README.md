@@ -1,6 +1,3 @@
-# als-assistant
-
-
 # ALS Assistant Setup Guide
 
 This guide provides step-by-step instructions for setting up and running the **ALS Assistant** project in your local development environment.

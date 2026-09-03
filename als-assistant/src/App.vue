@@ -12,6 +12,5 @@
 import NavBar from '@/components/NavBar.vue'
 import { useAuthStore } from '@/stores/auth'
 
-// Access state from Pinia auth store
 const authStore = useAuthStore()
 </script>

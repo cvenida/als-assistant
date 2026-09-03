@@ -8,7 +8,8 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const isFormValid = ref(false)
-const name = ref('')
+const firstName = ref('')
+const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -78,18 +79,36 @@ const handleSignup = async () => {
             </div>
           </div>
         </v-radio-group>
-        <v-text-field
-          v-model="name"
-          placeholder="Full Name"
-          prepend-inner-icon="mdi-account-outline"
-          variant="solo-filled"
-          flat
-          hide-details
-          rounded="lg"
-          density="comfortable"
-          class="mb-2"
-          :rules="[rules.required]"
-        ></v-text-field>
+        <v-row>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="firstName"
+              placeholder="First Name"
+              prepend-inner-icon="mdi-account-outline"
+              variant="solo-filled"
+              flat
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              class="mb-2"
+              :rules="[rules.required]"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-text-field
+              v-model="lastName"
+              placeholder="Last Name"
+              prepend-inner-icon="mdi-account-outline"
+              variant="solo-filled"
+              flat
+              hide-details
+              rounded="lg"
+              density="comfortable"
+              class="mb-2"
+              :rules="[rules.required]"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
         <v-text-field
           v-model="email"

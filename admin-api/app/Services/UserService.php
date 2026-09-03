@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class UserService
 {
@@ -14,21 +15,35 @@ class UserService
      */
     public function register($request)
     {
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required|string',
+            'lastName'  => 'required|string',
+            'email'      => 'required|email|unique:users',
+            'password'   => 'required|string|min:6',
+            'type'       => 'required|in:teacher,student',
+        ]);
+
+        $validated = $validator->validate();
+
         $user = User::create([
-            'name' => $request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
+            'first_name' => $validated['firstName'],
+            'last_name'  => $validated['lastName'],
+            'email'      => $validated['email'],
+            'password'   => Hash::make($validated['password']),
+            'type'       => $validated['type'],
         ]);
 
         return [
             'status' => true,
-            'message' => 'User registered successfully. Please log in.',
+            'message' => 'User registered successfully.',
             'code' => 201,
             'data' => [
                 'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
+                    'id'         => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name'  => $user->last_name,
+                    'email'      => $user->email,
+                    'type'       => $user->type,
                     'created_at' => $user->created_at,
                 ],
             ],
@@ -63,7 +78,9 @@ class UserService
                 'expires_in' => config('jwt.ttl') * 60, // 1 hour
                 'user' => [
                     'id' => $user->id,
-                    'name' => $user->name,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'type' => $user->type,
                     'email' => $user->email,
                 ],
             ],

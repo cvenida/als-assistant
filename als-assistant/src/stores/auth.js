@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { loginUser } from '@/services/authService'
+import { loginUser, registerUser } from '@/services/authService'
 import router from '@/router'
 
 export const useAuthStore = defineStore('auth', {
@@ -51,43 +51,27 @@ export const useAuthStore = defineStore('auth', {
       this.loading = false
     },
 
-    // Sign Up Action
-    // async signup(userData) {
-    //   this.loading = true
-    //   this.error = null
+    async signup(userData) {
+      this.loading = true
+      this.error = null
 
-    //   try {
-    //     // Replace with your actual API endpoint (e.g., await axios.post('/api/signup', userData))
-    //     const response = await fetch('/api/signup', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify(userData),
-    //     })
+      try {
+        const { data } = await registerUser(userData)
 
-    //     if (!response.ok) {
-    //       throw new Error('Failed to create account')
-    //     }
+        if (!response.ok) {
+          throw new Error('Failed to create account')
+        }
 
-    //     const data = await response.json()
-    //     this.setSession(data.user, data.token)
-    //     return true
-    //   } catch (err: any) {
-    //     this.error = err.message || 'Signup failed. Please try again.'
-    //     return false
-    //   } finally {
-    //     this.loading = false
-    //   }
-    // },
+        this.setSession(data.data.user, data.data.access_token)
+        await router.push('/dashboard')
+      } catch (error) {
+        console.log(error)
+      }
+      this.loading = false
+    },
 
     async logout() {
       try {
-        // await fetch('/api/logout', {
-        //   method: 'POST',
-        //   headers: {
-        //     Authorization: `Bearer ${this.token}`,
-        //   },
-        // })
-
         await router.push('/login')
       } catch (err) {
         console.warn('Backend logout failed or token was already invalid')

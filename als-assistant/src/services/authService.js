@@ -7,3 +7,7 @@ const { VITE_API_BASE_URL } = import.meta.env
 export const loginUser = async(payload) => {
   return await axios.post(`${VITE_API_BASE_URL}/login`, payload);
 }
+
+export const registerUser = async(payload) => {
+  return await axios.post(`${VITE_API_BASE_URL}/register`, payload);
+}

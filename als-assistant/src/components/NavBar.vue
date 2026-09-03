@@ -30,7 +30,7 @@ const drawer = ref(true)
 <template>
   <v-app-bar flat border class="px-3 bg-emerald-700 border-b border-slate-200">
     <v-app-bar-nav-icon class="text-white" @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-app-bar-title class="font-bold text-white text-slate-800">ALS Dashboard</v-app-bar-title>
+      <v-app-bar-title class="font-bold text-white text-slate-800">Dashboard</v-app-bar-title>
 
       <v-spacer></v-spacer>
 
@@ -47,7 +47,7 @@ const drawer = ref(true)
 
       <v-btn icon="mdi-bell-outline" variant="text" class="text-white text-slate-600"></v-btn>
       <v-avatar color="teal-lighten-4" class="ml-2 cursor-pointer">
-        <span class="text-teal-800 font-bold">AD</span>
+        <span class="text-teal-800 font-bold">AB</span>
       </v-avatar>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" border class="border-r border-slate-200">

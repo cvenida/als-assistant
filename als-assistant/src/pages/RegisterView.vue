@@ -27,8 +27,10 @@ const handleSignup = async () => {
   errorMessage.value = ''
 
   const success = await authStore.signup({
-    name: name.value,
+    firstName: firstName.value,
+    lastName: lastName.value,
     email: email.value,
+    type: userType.value,
     password: password.value,
   })
 

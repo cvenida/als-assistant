@@ -5,6 +5,8 @@ import Dashboard from '@/pages/DashboardView.vue'
 import StudentsView from '@/pages/StudentsView.vue'
 import CoursesView from '@/pages/CoursesView.vue'
 
+import { useAuthStore } from '@/stores/auth'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,11 +16,28 @@ const router = createRouter({
     },
     {
       path: '/login',
+      name: 'login',
       component: Login,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.isAuthenticated) {
+          next('/dashboard')
+        } else {
+          next()
+        }
+      },
     },
     {
       path: '/register',
       component: Register,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (authStore.isAuthenticated) {
+          next('/dashboard')
+        } else {
+          next()
+        }
+      },
     },
     {
       path: '/dashboard',

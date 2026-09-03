@@ -7,3 +7,10 @@
     border-radius: 10px;
   }
 }
+
+.blurred-app-bar {
+  background-color: rgba(4, 120, 87, 0.212)  !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  backdrop-filter: blur(10px) !important;
+  display: flex;
+}

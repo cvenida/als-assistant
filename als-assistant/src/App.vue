@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="bg-slate-50 min-h-screen">
     <NavBar v-if="authStore.isAuthenticated" />
 
     <v-main>

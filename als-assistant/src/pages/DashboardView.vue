@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
 
 const stats = ref([
   { title: 'Total Students', value: '1,284', icon: 'mdi-school', color: 'text-teal-600', bg: 'bg-teal-50', change: '+12%', isUp: true },
@@ -28,7 +30,7 @@ const recentUsers = ref([
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 class="text-2xl font-bold text-slate-900">Overview</h1>
-          <p class="text-sm text-slate-500">Welcome back teacher! Here is what is happening today.</p>
+          <p class="text-sm text-slate-500">Welcome back {{ authStore.currentUser.first_name }}! Here is what is happening today.</p>
         </div>
       </div>
 

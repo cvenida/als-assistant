@@ -13,6 +13,8 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token,
     currentUser: (state) => state.user,
+    authError: (state) => state.error,
+    isLoading: (state) => state.loading,
   },
 
   actions: {
@@ -42,11 +44,30 @@ export const useAuthStore = defineStore('auth', {
         this.setSession(data.data.user, data.data.access_token)
         await router.push('/dashboard')
       } catch (err) {
-        this.error = err.response?.data?.message || err.message || 'Login failed'
-        throw this.error
-      } finally {
-        this.loading = false
+        console.log(err)
       }
+
+      this.loading = false
+    },
+
+    
+    async signup(userData) {
+      this.loading = true
+      this.error = null
+
+      try {
+        const { data } = await registerUser(userData)
+
+        if (!response.ok) {
+          throw new Error('Failed to create account')
+        }
+
+        this.setSession(data.data.user, data.data.access_token)
+        await router.push('/dashboard')
+      } catch (error) {
+        console.log(error)
+      }
+      this.loading = false
     },
 
     async logout() {

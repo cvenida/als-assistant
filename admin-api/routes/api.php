@@ -15,9 +15,9 @@ Route::get('/', function () {
 Route::post('login', [UserController::class, 'login']);
 Route::post('register', [UserController::class, 'register']);
 
-Route::resource('courses', CourseController::class)->only(['store', 'update', 'destroy']);
-Route::resource('activities', ActivityController::class)->only(['store', 'update', 'destroy']);
-Route::resource('questions', QuestionController::class)->only(['store', 'update', 'destroy']);
+Route::resource('courses', CourseController::class)->only(['store', 'show', 'index', 'update', 'destroy']);
+Route::resource('activities', ActivityController::class)->only(['store', 'show', 'index', 'update', 'destroy']);
+Route::resource('questions', QuestionController::class)->only(['store', 'show', 'index', 'update', 'destroy']);
 
-Route::resource('course-applications', CourseApplicationController::class)->only(['store', 'destroy']);
+Route::resource('course-applications', CourseApplicationController::class)->only(['store', 'show', 'index', 'destroy']);
 Route::put('course-applications/{id}/status', [CourseApplicationController::class, 'updateStatus']);

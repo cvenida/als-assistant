@@ -3,10 +3,40 @@
 namespace App\Services;
 
 use App\Models\Activity;
+use App\Models\CourseApplication;
 use Illuminate\Support\Facades\Validator;
 
 class ActivityService
 {
+    /**
+     * Get all activities.
+     * 
+     */
+    public function index()
+    {
+        $activities = Activity::with('course')->get();
+
+        return response()->json($activities);
+    }
+
+    /**
+     * Get a specific activity by ID.
+     * 
+     */
+    public function show($id)
+    {
+        $activity = Activity::with(['course', 'questions.options'])->find($id);
+
+        if (!$activity) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Activity not found.',
+            ], 404);
+        }
+
+        return response()->json($activity);
+    }
+    
     /**
      * Handle activity creation.
      * 

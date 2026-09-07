@@ -10,6 +10,36 @@ use Illuminate\Validation\Rule;
 class CourseApplicationService
 {
     /**
+     * Get all course applications.
+     * 
+     */
+    public function index()
+    {
+        $applications = CourseApplication::with(['course', 'student'])->get();
+
+        return response()->json($applications);
+    }
+
+    /**
+     * Get a specific course application by ID.
+     * 
+     */
+    public function show($id)
+    {
+        $application = CourseApplication::with(['course', 'student'])->find($id);
+
+        if (!$application) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Application not found.',
+                'code' => 404,
+            ]);
+        }
+
+        return response()->json($application);
+    }
+
+    /**
      * Handle student application submission.
      * 
      */

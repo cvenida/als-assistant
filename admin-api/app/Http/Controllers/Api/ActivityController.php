@@ -20,6 +20,24 @@ class ActivityController extends Controller
     }
 
     /**
+     * List all activities function
+     * 
+     */
+    public function index()
+    {
+        return $this->activityService->index();
+    }
+
+    /**
+     * Show single activity function
+     * 
+     */
+    public function show($id)
+    {
+        return $this->activityService->show($id);
+    }
+
+    /**
      * Create activity function
      * 
      */

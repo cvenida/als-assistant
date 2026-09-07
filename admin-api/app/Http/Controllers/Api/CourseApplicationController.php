@@ -20,6 +20,24 @@ class CourseApplicationController extends Controller
     }
 
     /**
+     * List all applications function
+     * 
+     */
+    public function index()
+    {
+        return $this->courseApplicationService->index();
+    }
+
+    /**
+     * Show single application function
+     * 
+     */
+    public function show($id)
+    {
+        return $this->courseApplicationService->show($id);
+    }
+
+    /**
      * Apply for course function
      * 
      */

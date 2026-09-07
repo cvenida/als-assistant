@@ -26,9 +26,7 @@ class UserController extends Controller
      */
     public function register(Request $request)
     {
-        $result = $this->userService->register($request);
-
-        return response()->json($result);
+        return $this->userService->register($request);
     }
 
     /**
@@ -37,8 +35,6 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        $result = $this->userService->login($request);
-
-        return response()->json($result);
+        return $this->userService->login($request);
     }
 }

@@ -33,7 +33,7 @@ class UserService
             'type'       => $validated['type'],
         ]);
 
-        return [
+        return response()->json([
             'status' => true,
             'message' => 'User registered successfully.',
             'code' => 201,
@@ -47,7 +47,7 @@ class UserService
                     'created_at' => $user->created_at,
                 ],
             ],
-        ];
+        ]);
     }
 
     /**
@@ -59,16 +59,16 @@ class UserService
         $user = User::where('email', $request['email'])->first();
 
         if (!$user || !Hash::check($request['password'], $user->password)) {
-            return [
+            return response()->json([
                 'status' => false,
                 'message' => 'Invalid email or password request.',
                 'code' => 401,
-            ];
+            ]);
         }
 
         $token = JWTAuth::fromUser($user);
 
-        return [
+        return response()->json([
             'status' => true,
             'message' => 'Login successful.',
             'code' => 200,
@@ -84,6 +84,6 @@ class UserService
                     'email' => $user->email,
                 ],
             ],
-        ];
+        ]);
     }
 }

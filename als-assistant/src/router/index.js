@@ -72,6 +72,7 @@ const router = createRouter({
         {
           path: 'students',
           name: 'teacher-students',
+          component: StudentsView,
           meta: { title: 'Students', description: 'Manage & track student enrollments'},
         },
         {

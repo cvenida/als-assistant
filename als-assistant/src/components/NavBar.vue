@@ -13,6 +13,7 @@ import {
   Settings2,
 } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
+import { USER_TYPE } from '@/shared/constants'
 
 const route = useRoute()
 
@@ -21,9 +22,9 @@ const authStore = useAuthStore()
 const { mobile } = useDisplay()
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard' },
-  { icon: BookOpen, label: 'Courses', to: '/courses' },
-  { icon: GraduationCap, label: 'Students', to: '/students' },
+  { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard', teacherOnly: false },
+  { icon: BookOpen, label: 'Courses', to: '/courses', teacherOnly: false },
+  { icon: GraduationCap, label: 'Students', to: '/students', teacherOnly: true },
 ]
 
 const drawer = ref(true)
@@ -34,6 +35,7 @@ const pageDescription = computed(() => route.meta.description || '')
 const userFullName = computed(() => `${authStore.currentUser.first_name} ${authStore.currentUser.last_name}`)
 const currentDate = computed(() => moment().format('dddd, MMMM D'))
 const classCount = computed(() => `0 classes today`)
+const isStudent = computed(() => authStore.currentUser.type == USER_TYPE.STUDENT)
 
 const userInitials = computed(() => {
   const name = userFullName.value
@@ -44,6 +46,11 @@ const userInitials = computed(() => {
     .substring(0, 2)
     .toUpperCase()
 })
+
+const filteredNavItems = computed(() => {
+  return navItems.filter(item => !(item.teacherOnly && isStudent.value))
+})
+
 </script>
 
 <template>
@@ -53,7 +60,7 @@ const userInitials = computed(() => {
     class="border-t border-slate-200"
   >
     <v-btn
-      v-for="item in navItems"
+      v-for="item in filteredNavItems"
       :key="item.label"
       :to="item.to"
       color="primary"
@@ -90,7 +97,7 @@ const userInitials = computed(() => {
 
     <v-list nav class="px-3 py-2 space-y-1">
       <v-list-item
-        v-for="item in navItems"
+        v-for="item in filteredNavItems"
         :key="item.label"
         link
         :to="item.to"
@@ -127,7 +134,7 @@ const userInitials = computed(() => {
           </template>
           
           <v-list-item-title class="text-sm font-semibold text-foreground">ALS Assistant</v-list-item-title>
-          <v-list-item-subtitle class="text-xs text-muted-foreground">Teacher Portal</v-list-item-subtitle>
+          <v-list-item-subtitle class="text-xs text-muted-foreground">{{ isStudent ? 'Student' : 'Teacher' }} Portal</v-list-item-subtitle>
         </v-list-item>
       </v-container>
     </template>

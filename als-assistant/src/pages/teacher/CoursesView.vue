@@ -101,7 +101,7 @@ const getLevelBadgeColor = (level: Course['level']) => {
 </script>
 
 <template>
-  <v-layout class="bg-slate-50 min-h-screen">
+  <v-layout class="min-h-screen">
     <v-main class="p-6">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
@@ -110,7 +110,7 @@ const getLevelBadgeColor = (level: Course['level']) => {
         </div>
 
         <v-btn
-          color="emerald-700"
+          color="primary"
           prepend-icon="mdi-plus"
           rounded="lg"
           class="capitalize text-white font-medium"
@@ -194,7 +194,7 @@ const getLevelBadgeColor = (level: Course['level']) => {
             </p>
           </div>
 
-          <div class="px-5 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between rounded-b-2xl">
+          <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between rounded-b-2xl">
             <div class="flex items-center gap-1.5 text-xs text-slate-600">
               <v-icon icon="mdi-account-group-outline" size="small" class="text-slate-400"></v-icon>
               <span><strong class="text-slate-900 font-semibold">{{ course.enrolledStudents }}</strong> Enrolled</span>

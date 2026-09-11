@@ -11,3 +11,7 @@ export const loginUser = async(payload) => {
 export const registerUser = async(payload) => {
   return await axios.post(`${VITE_API_BASE_URL}/register`, payload);
 }
+
+export const logoutUser = async(payload) => {
+  return await axios.post(`${VITE_API_BASE_URL}/logout`, payload);
+}

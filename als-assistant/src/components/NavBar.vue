@@ -1,37 +1,36 @@
 <script lang="ts" setup>
 import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
+import moment from 'moment'
 import { useAuthStore } from '@/stores/auth'
+import {
+  BookOpen,
+  LayoutDashboard,
+  GraduationCap,
+  Settings,
+  Bell,
+  LucideLogOut,
+} from 'lucide-vue-next'
+
 
 const authStore = useAuthStore()
 
 const { mobile } = useDisplay()
 
-const navItems = ref([
-  {
-    title: 'Dashboard',
-    value: 'dashboard',
-    icon: 'mdi-view-dashboard',
-    to: '/dashboard',
-  },
-  {
-    title: 'Students',
-    value: 'students',
-    icon: 'mdi-school',
-    to: '/students',
-  },
-  {
-    title: 'Courses',
-    value: 'courses',
-    icon: 'mdi-book-open-variant',
-    to: '/courses',
-  },
-])
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard' },
+  { icon: BookOpen, label: 'Courses', to: '/courses' },
+  { icon: GraduationCap, label: 'Students', to: '/students' },
+]
 
 const drawer = ref(true)
 
+const userFullName = computed(() => `${authStore.currentUser.first_name} ${authStore.currentUser.last_name}`)
+const currentDate = computed(() => moment().format('dddd, MMMM D'))
+const classCount = computed(() => `0 classes today`)
+
 const userInitials = computed(() => {
-  const name = authStore.user?.name || 'Admin User'
+  const name = userFullName.value
   return name
     .split(' ')
     .map((n) => n[0])
@@ -42,94 +41,94 @@ const userInitials = computed(() => {
 </script>
 
 <template>
-  <v-app-bar flat border class="px-3 border-b border-slate-200 blurred-app-bar">
-    <v-app-bar-nav-icon
-      v-if="!mobile"
-      class="text-emerald-700"
-      @click="drawer = !drawer"
-    ></v-app-bar-nav-icon>
-
-    <v-app-bar-title class="font-bold text-teal-700 text-slate-800">ALS Assistant</v-app-bar-title>
-
-    <v-spacer></v-spacer>
-
-    <v-text-field
-      placeholder="Search..."
-      prepend-inner-icon="mdi-magnify"
-      variant="solo-filled"
-      flat
-      hide-details
-      density="compact"
-      rounded="lg"
-      class="max-w-xs hidden sm:block mr-4"
-    ></v-text-field>
-
-    <!-- <v-btn icon="mdi-bell-outline" variant="text" class="text-slate-600"></v-btn> -->
-
-    <v-menu location="bottom end">
-      <template #activator="{ props }">
-        <v-avatar color="teal-lighten-4" class="ml-2 cursor-pointer" v-bind="props">
-          <span class="text-teal-800 font-bold text-xs">{{ userInitials }}</span>
-        </v-avatar>
-      </template>
-      <v-list v-if="mobile" density="compact" class="rounded-xl border border-slate-200 mt-2">
-        <v-list-item
-          prepend-icon="mdi-logout"
-          title="Logout"
-          class="text-red-600"
-          @click="authStore.logout()"
-        ></v-list-item>
-      </v-list>
-    </v-menu>
-  </v-app-bar>
-
-  <v-navigation-drawer
-    v-if="!mobile"
-    v-model="drawer"
-    border
-    class="border-r border-slate-200"
-  >
-    <v-list nav density="compact" class="p-2">
-      <v-list-item
-        v-for="item in navItems"
-        :key="item.value"
-        :prepend-icon="item.icon"
-        :title="item.title"
-        :value="item.value"
-        :to="item.to"
-        active-color="emerald-700"
-        rounded="lg"
-      ></v-list-item>
-    </v-list>
-
-    <template #append>
-      <div class="p-3 border-t border-slate-200">
-        <v-list-item
-          @click="authStore.logout()"
-          prepend-icon="mdi-logout"
-          title="Logout"
-          value="logout"
-          class="text-red-600"
-          rounded="lg"
-        ></v-list-item>
-      </div>
-    </template>
-  </v-navigation-drawer>
-
   <v-bottom-navigation
-    v-else
+    v-if="mobile"
     grow
     class="border-t border-slate-200"
   >
     <v-btn
       v-for="item in navItems"
-      :key="item.value"
+      :key="item.label"
       :to="item.to"
-      active-color="emerald-700"
-      :value="item.value"
+      color="primary"
+      :value="item.label"
     >
-      <v-icon>{{ item.icon }}</v-icon>
-      <span>{{ item.title }}</span>
+      <component :is="item.icon" class="size-4 mb-1" />
+      <span>{{ item.label }}</span>
     </v-btn>
   </v-bottom-navigation>
+
+  <v-navigation-drawer
+    v-else
+    v-model="drawer"
+    border
+    class="border-r border-slate-200"
+  >
+    <v-list-item class="px-5 py-5 border-b border-gray-200">
+      <template #prepend>
+        <v-avatar color="primary" rounded="lg" size="36">
+          <GraduationCap class="size-5 text-primary-foreground" />
+        </v-avatar>
+      </template>
+      <v-list-item-title class="text-sm font-semibold text-foreground">ALS Assistant</v-list-item-title>
+      <v-list-item-subtitle class="text-xs text-muted-foreground">Teacher Portal</v-list-item-subtitle>
+    </v-list-item>
+
+    <v-list nav class="px-3 py-2 space-y-1">
+      <v-list-item
+        v-for="item in navItems"
+        :key="item.label"
+        link
+        :to="item.to"
+        color="primary"
+        rounded="lg"
+        class="hover:bg-gray-100 dark:hover:bg-gray-800"
+      >
+        <template #prepend>
+          <component :is="item.icon" class="size-4 mr-3" />
+        </template>
+        <v-list-item-title class="text-sm font-medium">{{ item.label }}</v-list-item-title>
+      </v-list-item>
+    </v-list>
+
+    <template #append>
+      <v-container class="p-3 border-t border-gray-200">
+        <v-btn block variant="text" class="justify-start text-none text-muted-foreground hover:bg-accent" rounded="lg">
+          <template #prepend>
+            <Settings class="size-4 mr-1" />
+          </template>
+          Settings
+        </v-btn>
+        <v-btn block variant="text" @click="authStore.logout" class="justify-start text-error text-muted-foreground hover:bg-accent" rounded="lg">
+          <template #prepend>
+            <LucideLogOut class="size-4 mr-1" />
+          </template>
+          Logout
+        </v-btn>
+        <v-list-item class="mt-2 rounded-lg border border-gray-200">
+          <template #prepend>
+            <v-avatar color="primary" size="32" class="text-xs font-semibold text-primary-foreground">
+              {{ userInitials }}
+            </v-avatar>
+          </template>
+          <v-list-item-title class="truncate text-sm font-medium text-foreground">{{ userFullName }}</v-list-item-title>
+        </v-list-item>
+      </v-container>
+    </template>
+  </v-navigation-drawer>
+
+  <v-app-bar flat class="bg-background/80 backdrop-blur px-2 py-2">
+    <v-app-bar-title>
+      <h1 class="text-lg font-semibold text-foreground sm:text-xl">Good morning, {{ authStore.currentUser.first_name }}</h1>
+      <p class="text-xs text-muted-foreground sm:text-sm">
+        {{ currentDate }} — {{ classCount }}
+      </p>
+    </v-app-bar-title>
+    <template #append>
+      <v-btn icon variant="plain" rounded="lg" size="small" class="relative text-muted-foreground mr-2 border border-gray-200">
+        <Bell class="size-4" />
+        <span class="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
+      </v-btn>
+    </template>
+  </v-app-bar>
 </template>

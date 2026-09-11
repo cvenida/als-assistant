@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import { loginUser, registerUser } from '@/services/authService'
+import { loginUser, registerUser, logoutUser } from '@/services/authService'
 import router from '@/router'
+import { USER_TYPE } from '@/shared/constants'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -42,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
         }
 
         this.setSession(data.data.user, data.data.access_token)
-        await router.push('/dashboard')
+        await router.push(data.data.user.type == USER_TYPE.TEACHER ? '/dashboard' : '/student/dashboard')
       } catch (err) {
         console.log(err)
       }
@@ -71,6 +72,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
+      await logoutUser();
+
       this.clearSession()
       await router.push('/login')
     },

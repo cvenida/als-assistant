@@ -86,4 +86,18 @@ class UserService
             ],
         ]);
     }
+
+    /**
+     * Log out the current user context.
+     */
+    public function logout()
+    {
+        auth()->forgetUser();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Successfully logged out.',
+            'code' => 200,
+        ]);
+    }
 }

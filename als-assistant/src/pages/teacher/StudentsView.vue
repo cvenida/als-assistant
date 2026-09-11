@@ -80,15 +80,13 @@ const enrolledHeaders = [
 </script>
 
 <template>
-  <v-layout class="bg-slate-50 min-h-screen">
-    <v-main class="p-6">
-      <!-- Header -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+  <v-container class="min-h-screen flex flex-col">
+      <!-- <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 class="text-2xl font-bold text-slate-900">Student Admissions</h1>
           <p class="text-sm text-slate-500">Review pending applications and manage active student enrollments.</p>
         </div>
-      </div>
+      </div> -->
 
       <!-- Navigation Tabs -->
       <div class="border-b border-slate-200 mb-6">
@@ -185,7 +183,6 @@ const enrolledHeaders = [
         </v-window-item>
       </v-window>
 
-      <!-- ACCEPT CONFIRMATION DIALOG -->
       <v-dialog v-model="isAcceptDialogOpen" max-width="480px">
         <v-card class="rounded-2xl p-2">
           <v-card-title class="text-lg font-bold text-slate-900 pt-4 px-4">
@@ -218,6 +215,5 @@ const enrolledHeaders = [
           </v-card-actions>
         </v-card>
       </v-dialog>
-    </v-main>
-  </v-layout>
+  </v-container>
 </template>

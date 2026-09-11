@@ -8,9 +8,18 @@
   }
 }
 
-.blurred-app-bar {
-  background-color: rgba(4, 120, 87, 0.212)  !important;
-  -webkit-backdrop-filter: blur(10px) !important;
-  backdrop-filter: blur(10px) !important;
-  display: flex;
+/* Force all Vuetify layout wrappers to clip horizontal overflow */
+html,
+body,
+#app,
+.v-application,
+.v-application__wrap {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* Ensure child views never force parent width expansion */
+.v-main {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
 }

@@ -3,11 +3,50 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\CourseApplication;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 class CourseService
 {
+    /**
+     * Get all course by user logged in.
+     * 
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $courses = Course::where('user_id', $user->id)->get();
+
+        return response()->json($courses);
+    }
+
+    /**
+     * Get a specific course.
+     * 
+     */
+    public function show($id)
+    {
+        $application = CourseApplication::with(['course', 'student'])->find($id);
+
+        if (!$application) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Application not found.',
+                'code' => 404,
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Application retrieved successfully.',
+            'code' => 200,
+            'data' => [
+                'application' => $application,
+            ],
+        ]);
+    }
+    
     /**
      * Handle course creation.
      * 

@@ -19,23 +19,23 @@ class CourseController extends Controller
         $this->courseService = $courseService;
     }
 
-    // /**
-    //  * List all courses function
-    //  * 
-    //  */
-    // public function index()
-    // {
-    //     return $this->courseService->index();
-    // }
+    /**
+     * List all courses function
+     * 
+     */
+    public function index()
+    {
+        return $this->courseService->index();
+    }
 
-    // /**
-    //  * Show single course function
-    //  * 
-    //  */
-    // public function show($id)
-    // {
-    //     return $this->courseService->show($id);
-    // }
+    /**
+     * Show single course function
+     * 
+     */
+    public function show($id)
+    {
+        return $this->courseService->show($id);
+    }
 
     /**
      * Create course function

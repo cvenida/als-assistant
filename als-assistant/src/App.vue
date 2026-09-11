@@ -1,7 +1,6 @@
 <template>
-  <v-app class="bg-slate-50 min-h-screen">
+  <v-app class="min-h-screen">
     <NavBar v-if="authStore.isAuthenticated" />
-
     <v-main>
       <router-view />
     </v-main>

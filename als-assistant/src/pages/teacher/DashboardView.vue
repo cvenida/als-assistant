@@ -31,19 +31,12 @@ const courseStore = useCourseStore()
 
 const { allCourses, isLoading } = storeToRefs(courseStore)
 
-const courseList = ref([]);
-
 const appHeaders = [
   { title: 'Applicant', key: 'name' },
   { title: 'Requested Course', key: 'requestedCourseId' },
   { title: 'Applied Date', key: 'date' },
   { title: 'Actions', key: 'actions', sortable: false, align: 'end' as const },
 ]
-
-const query = ref('')
-const courseFilter = ref('All courses')
-const statusFilter = ref('All statuses')
-
 
 // Pending applications
 const isAcceptDialogOpen = ref(false)
@@ -117,7 +110,7 @@ const activities = ref([
 ])
 
 onMounted(async () => {
-  courseList.value = await courseStore.fetchCourses();
+  if (!allCourses.value.length) await courseStore.fetchCourses();
 })
 </script>
 
@@ -267,7 +260,6 @@ onMounted(async () => {
         </v-card>
       </v-col>
 
-      <!-- Right Column: Recent Activity Feed -->
       <v-col cols="12" lg="5" xl="4">
         <v-card flat class="border border-gray-200 rounded-2xl p-4 sm:p-5 h-full">
           <div class="mb-4 flex items-center justify-between">

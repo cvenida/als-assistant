@@ -1,68 +1,30 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useCourseStore } from '@/stores/courses'
+import { storeToRefs } from 'pinia'
+import { capitalize } from 'lodash'
 
-// Types
-interface Course {
-  id: number
-  code: string
-  title: string
-  description: string
-  level: 'BLP' | 'Elementary A&E' | 'Secondary A&E'
-  enrolledStudents: number
-  status: 'Active' | 'Inactive'
-}
+const courseStore = useCourseStore()
 
-// State
+const { allCourses, isLoading } = storeToRefs(courseStore)
+
 const searchQuery = ref('')
-const selectedLevelFilter = ref<string | null>(null)
+const selectedStatusFilter = ref(null)
 const isAddDialogOpen = ref(false)
 
-// Sample Courses Data
-const courses = ref<Course[]>([
-  {
-    id: 1,
-    code: 'ALS-BLP-01',
-    title: 'Basic Literacy Program',
-    description: 'Focuses on basic reading, writing, and numeracy skills for out-of-school youth and adults.',
-    level: 'BLP',
-    enrolledStudents: 34,
-    status: 'Active',
-  },
-  {
-    id: 2,
-    code: 'ALS-AE-ELEM',
-    title: 'Elementary Accreditation & Equivalency',
-    description: 'Designed for learners seeking elementary level accreditation through standardized modular assessments.',
-    level: 'Elementary A&E',
-    enrolledStudents: 52,
-    status: 'Active',
-  },
-  {
-    id: 3,
-    code: 'ALS-AE-SEC',
-    title: 'Secondary Accreditation & Equivalency',
-    description: 'Prepares high school level learners for secondary equivalency certification and life skill application.',
-    level: 'Secondary A&E',
-    enrolledStudents: 89,
-    status: 'Active',
-  },
-])
-
-const newCourse = ref<Omit<Course, 'id' | 'enrolledStudents'>>({
-  code: '',
+const newCourse = ref({
   title: '',
   description: '',
-  level: 'BLP',
-  status: 'Active',
+  tags: [],
 })
 
-const levels = ['BLP', 'Elementary A&E', 'Secondary A&E']
+const status = ['active', 'inactive', 'draft']
+const availableTags = ref(['PHP', 'Laravel', 'Vue 3', 'Tailwind', 'Backend'])
 
-// Filtered Courses Computed Property
 const filteredCourses = computed(() => {
-  return courses.value.filter((course) => {
-    const matchesLevel = selectedLevelFilter.value
-      ? course.level === selectedLevelFilter.value
+  return allCourses.value.filter((course) => {
+    const matchesLevel = selectedStatusFilter.value
+      ? course.level === selectedStatusFilter.value
       : true
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -72,43 +34,42 @@ const filteredCourses = computed(() => {
 })
 
 const totalEnrolled = computed(() =>
-  courses.value.reduce((acc, c) => acc + c.enrolledStudents, 0)
+  allCourses.value.reduce((acc, c) => acc + c.enrolledStudents, 0)
 )
 
 const handleCreateCourse = () => {
-  if (!newCourse.value.title || !newCourse.value.code) return
+  if (!newCourse.value.title) return
 
-  courses.value.unshift({
+  allCourses.value.unshift({
     id: Date.now(),
     ...newCourse.value,
     enrolledStudents: 0,
   })
 
-  newCourse.value = { code: '', title: '', description: '', level: 'BLP', status: 'Active' }
+  newCourse.value = { code: '', title: '', description: '', tags: [] }
   isAddDialogOpen.value = false
 }
 
 const getLevelBadgeColor = (level: Course['level']) => {
   switch (level) {
-    case 'BLP':
+    case 'active':
       return 'bg-blue-50 text-blue-700 border-blue-200'
-    case 'Elementary A&E':
-      return 'bg-amber-50 text-amber-700 border-amber-200'
-    case 'Secondary A&E':
+    case 'draft':
+      return 'bg-gray-50 text-gray-700 border-gray-200'
+    case 'inactive':
       return 'bg-emerald-50 text-emerald-700 border-emerald-200'
   }
 }
+
+onMounted(async () => {
+  if (!allCourses.value.length) await courseStore.fetchCourses();
+})
 </script>
 
 <template>
   <v-layout class="min-h-screen">
     <v-main class="p-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 class="text-2xl font-bold text-slate-900">Courses</h1>
-          <p class="text-sm text-slate-500">Manage learning programs and track student enrollments.</p>
-        </div>
-
+      <div class="flex flex-col sm:flex-row sm:items-end justify-end gap-4 mb-6">
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
@@ -124,19 +85,15 @@ const getLevelBadgeColor = (level: Course['level']) => {
         <v-col cols="12" md="6">
           <v-card flat class="p-4 border border-slate-200 rounded-2xl bg-white">
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Courses</p>
-            <p class="text-2xl font-bold text-slate-900 mt-1">{{ courses.length }}</p>
+            <p class="text-2xl font-bold text-primary mt-1">{{ allCourses.length }}</p>
           </v-card>
         </v-col>
         <v-col cols="12" md="6">
           <v-card flat class="p-4 border border-slate-200 rounded-2xl bg-white">
             <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Active Enrollees</p>
-            <p class="text-2xl font-bold text-emerald-700 mt-1">{{ totalEnrolled }}</p>
+            <p class="text-2xl font-bold text-primary mt-1">{{ totalEnrolled || 0 }}</p>
           </v-card>
         </v-col>
-        <!-- <v-card flat class="p-4 border border-slate-200 rounded-2xl bg-white">
-          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Programs Offered</p>
-          <p class="text-2xl font-bold text-slate-900 mt-1">3 ALS Levels</p>
-        </v-card> -->
       </v-row>
 
       <v-card flat class="p-4 border border-slate-200 rounded-2xl mb-6 bg-white">
@@ -154,56 +111,75 @@ const getLevelBadgeColor = (level: Course['level']) => {
           ></v-text-field>
 
           <v-select
-            v-model="selectedLevelFilter"
-            :items="levels"
+            v-model="selectedStatusFilter"
+            :items="status"
             label="Filter by Level"
             variant="outlined"
             density="compact"
             hide-details
             clearable
             rounded="lg"
-          ></v-select>
+          >
+            <template #selection="{ item }">
+              <span class="text-capitalize">{{ capitalize(item) }}</span>
+            </template>
+
+            <template #item="{ item, props }">
+              <v-list-item v-bind="props" :title="capitalize(item)" class="text-capitalize" />
+            </template>
+          </v-select>
         </div>
       </v-card>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <v-card
+      <v-row>
+        <v-col
+          cols="12"
+          md="6"
           v-for="course in filteredCourses"
           :key="course.id"
-          flat
-          class="border border-slate-200 rounded-2xl bg-white flex flex-col justify-between hover:border-slate-300 transition-all"
         >
-          <div class="p-5">
-            <div class="flex items-center justify-between gap-2 mb-3">
-              <span class="text-xs font-mono font-bold text-slate-500 uppercase">
-                {{ course.code }}
-              </span>
-              <span
-                :class="[
-                  'px-2.5 py-0.5 text-xs font-semibold rounded-full border',
-                  getLevelBadgeColor(course.level)
-                ]"
-              >
-                {{ course.level }}
-              </span>
+          <v-card
+            flat
+            class="border border-slate-200 rounded-2xl bg-white flex flex-col justify-between hover:border-slate-300 transition-all"
+          >
+            <div class="p-5">
+              <div class="flex items-center justify-between gap-2 mb-3">
+                <v-container class="flex p-0 gap-1">
+                  <v-chip 
+                    v-for="tag in course.course_tags" 
+                    size="small" 
+                    class="bg-muted text-muted-foreground px-4 font-medium"
+                  >
+                    {{ tag }}
+                  </v-chip>
+                </v-container>
+                  <span
+                  :class="[
+                    'px-2.5 py-0.5 text-xs font-semibold rounded-full border',
+                    getLevelBadgeColor(course.status || 'draft')
+                  ]"
+                >
+                  {{ capitalize(course.status) || 'Draft' }}
+                </span>
+              </div>
+
+              <h2 class="text-lg font-bold text-slate-900 mb-2">{{ course.title }}</h2>
+              <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                {{ course.description }}
+              </p>
             </div>
 
-            <h2 class="text-lg font-bold text-slate-900 mb-2">{{ course.title }}</h2>
-            <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-              {{ course.description }}
-            </p>
-          </div>
+            <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between rounded-b-2xl">
+              <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                <v-icon icon="mdi-account-group-outline" size="small" class="text-slate-400"></v-icon>
+                <span><strong class="text-slate-900 font-semibold">{{ course.enrolledStudents }}</strong> Enrolled</span>
+              </div>
 
-          <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between rounded-b-2xl">
-            <div class="flex items-center gap-1.5 text-xs text-slate-600">
-              <v-icon icon="mdi-account-group-outline" size="small" class="text-slate-400"></v-icon>
-              <span><strong class="text-slate-900 font-semibold">{{ course.enrolledStudents }}</strong> Enrolled</span>
+              <v-btn icon="mdi-dots-vertical" variant="text" size="small" color="slate-500"></v-btn>
             </div>
-
-            <v-btn icon="mdi-dots-vertical" variant="text" size="small" color="slate-500"></v-btn>
-          </div>
-        </v-card>
-      </div>
+          </v-card>
+        </v-col>
+      </v-row>
 
       <v-dialog v-model="isAddDialogOpen" max-width="520px">
         <v-card class="rounded-2xl p-2">
@@ -213,29 +189,12 @@ const getLevelBadgeColor = (level: Course['level']) => {
 
           <v-card-text class="space-y-4 px-4 py-2">
             <v-text-field
-              v-model="newCourse.code"
-              label="Course Code (e.g., ALS-BLP-02)"
-              variant="outlined"
-              density="comfortable"
-              rounded="lg"
-            ></v-text-field>
-
-            <v-text-field
               v-model="newCourse.title"
               label="Course Title"
               variant="outlined"
               density="comfortable"
               rounded="lg"
             ></v-text-field>
-
-            <v-select
-              v-model="newCourse.level"
-              :items="levels"
-              label="ALS Program Level"
-              variant="outlined"
-              density="comfortable"
-              rounded="lg"
-            ></v-select>
 
             <v-textarea
               v-model="newCourse.description"
@@ -245,6 +204,31 @@ const getLevelBadgeColor = (level: Course['level']) => {
               rows="3"
               rounded="lg"
             ></v-textarea>
+
+            <v-combobox
+              v-model="newCourse.tags"
+              :items="availableTags"
+              variant="outlined"
+              chips
+              multiple
+              clearable
+              label="Course Tags"
+              density="comfortable"
+              rounded="lg"
+              hint="Type a tag and press Enter to add"
+              persistent-hint
+            >
+              <template #chip="{ props, item }">
+                <v-chip
+                  v-bind="props"
+                  size="small"
+                  class="text-capitalize font-medium"
+                  closable
+                >
+                  {{ item.raw }}
+                </v-chip>
+              </template>
+            </v-combobox>
           </v-card-text>
 
           <v-card-actions class="p-4 flex justify-end gap-2">

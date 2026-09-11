@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { loginUser, registerUser, logoutUser } from '@/services/authService'
 import router from '@/router'
 import { USER_TYPE } from '@/shared/constants'
+import { useCourseStore } from '@/stores/courses'
+
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -32,6 +34,8 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(credentials) {
+      const courseStore = useCourseStore();
+
       this.loading = true
       this.error = null
 
@@ -42,6 +46,7 @@ export const useAuthStore = defineStore('auth', {
           throw new Error(data.message || 'Invalid credentials')
         }
 
+        await courseStore.fetchCourses();
         this.setSession(data.data.user, data.data.access_token)
         await router.push(data.data.user.type == USER_TYPE.TEACHER ? '/dashboard' : '/student/dashboard')
       } catch (err) {

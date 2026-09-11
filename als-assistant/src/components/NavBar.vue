@@ -10,8 +10,11 @@ import {
   Settings,
   Bell,
   LucideLogOut,
+  Settings2,
 } from 'lucide-vue-next'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 
 const authStore = useAuthStore()
 
@@ -24,6 +27,9 @@ const navItems = [
 ]
 
 const drawer = ref(true)
+
+const pageTitle = computed(() => route.meta.title || `Good morning, ${authStore.currentUser.first_name}`)
+const pageDescription = computed(() => route.meta.description || '')
 
 const userFullName = computed(() => `${authStore.currentUser.first_name} ${authStore.currentUser.last_name}`)
 const currentDate = computed(() => moment().format('dddd, MMMM D'))
@@ -56,6 +62,14 @@ const userInitials = computed(() => {
       <component :is="item.icon" class="size-4 mb-1" />
       <span>{{ item.label }}</span>
     </v-btn>
+    <v-btn
+      to="/settings"
+      color="primary"
+      value="settings"
+    >
+      <component :is="Settings2" class="size-4 mb-1" />
+      <span>Settings</span>
+    </v-btn>
   </v-bottom-navigation>
 
   <v-navigation-drawer
@@ -66,12 +80,12 @@ const userInitials = computed(() => {
   >
     <v-list-item class="px-5 py-5 border-b border-gray-200">
       <template #prepend>
-        <v-avatar color="primary" rounded="lg" size="36">
-          <GraduationCap class="size-5 text-primary-foreground" />
+        <v-avatar color="primary" size="32" class="text-xs font-semibold text-primary-foreground">
+          {{ userInitials }}
         </v-avatar>
       </template>
-      <v-list-item-title class="text-sm font-semibold text-foreground">ALS Assistant</v-list-item-title>
-      <v-list-item-subtitle class="text-xs text-muted-foreground">Teacher Portal</v-list-item-subtitle>
+      <v-list-item-title class="truncate text-sm font-medium text-foreground">{{ userFullName }}</v-list-item-title>
+      <!-- <v-list-item-subtitle class="text-xs text-muted-foreground">Dept.</v-list-item-subtitle> -->
     </v-list-item>
 
     <v-list nav class="px-3 py-2 space-y-1">
@@ -107,11 +121,13 @@ const userInitials = computed(() => {
         </v-btn>
         <v-list-item class="mt-2 rounded-lg border border-gray-200">
           <template #prepend>
-            <v-avatar color="primary" size="32" class="text-xs font-semibold text-primary-foreground">
-              {{ userInitials }}
+            <v-avatar color="primary" rounded="lg" size="36">
+              <GraduationCap class="size-5 text-primary-foreground" />
             </v-avatar>
           </template>
-          <v-list-item-title class="truncate text-sm font-medium text-foreground">{{ userFullName }}</v-list-item-title>
+          
+          <v-list-item-title class="text-sm font-semibold text-foreground">ALS Assistant</v-list-item-title>
+          <v-list-item-subtitle class="text-xs text-muted-foreground">Teacher Portal</v-list-item-subtitle>
         </v-list-item>
       </v-container>
     </template>
@@ -119,9 +135,9 @@ const userInitials = computed(() => {
 
   <v-app-bar flat class="bg-background/80 backdrop-blur px-2 py-2">
     <v-app-bar-title>
-      <h1 class="text-lg font-semibold text-foreground sm:text-xl">Good morning, {{ authStore.currentUser.first_name }}</h1>
-      <p class="text-xs text-muted-foreground sm:text-sm">
-        {{ currentDate }} — {{ classCount }}
+      <h1 class="text-2xl font-bold text-primary">{{ pageTitle }}</h1>
+      <p class="text-xs text-muted-foreground sm:text-sm text-slate-500">
+         {{ pageDescription ? pageDescription : `${currentDate} — ${classCount}` }}
       </p>
     </v-app-bar-title>
     <template #append>

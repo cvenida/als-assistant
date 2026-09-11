@@ -49,7 +49,8 @@ const router = createRouter({
         next()
       },
     },
-    // Teacher Routes
+
+    // Teacher Routes Parent (Single Checker)
     {
       path: '/',
       beforeEnter: (to, from, next) => {
@@ -71,17 +72,18 @@ const router = createRouter({
         {
           path: 'students',
           name: 'teacher-students',
-          component: StudentsView,
+          meta: { title: 'Students', description: 'Manage & track student enrollments'},
         },
         {
           path: 'courses',
           name: 'teacher-courses',
           component: CoursesView,
+          meta: { title: 'Courses', description: 'Manage learning programs' },
         },
       ],
     },
 
-    // Student Routes
+    // Student Routes Parent (Single Checker)
     {
       path: '/student',
       beforeEnter: (to, from, next) => {

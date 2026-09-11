@@ -145,7 +145,7 @@ onMounted(async () => {
           </v-container>
           <div v-if='!isLoading'>
             <p class="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">0</p>
-            <p class="mt-1 text-xs text-muted-foreground">Across 6 courses</p>
+            <p class="mt-1 text-xs text-slate-400 text-muted-foreground">Across {{ allCourses.length }} courses</p>
           </div>
           <v-progress-circular
             v-else
@@ -160,7 +160,7 @@ onMounted(async () => {
     <div>
       <div class=" mb-4 flex items-center justify-between p-0">
         <h2 class="text-base font-semibold text-foreground">Recent courses</h2>
-        <v-btn variant="text" color="primary" class="text-none font-medium text-sm">
+        <v-btn @click="$router.push('/courses')" variant="text" color="primary" class="text-none font-medium text-sm">
           View all <ChevronRight class="size-4 ml-1" />
         </v-btn>
       </div>

@@ -1,68 +1,117 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useCourseStore } from '@/stores/courses'
 import { storeToRefs } from 'pinia'
-import { capitalize } from 'lodash'
+import { capitalize, get } from 'lodash'
+import { MoreVertical, SquarePen, Trash2 } from 'lucide-vue-next'
+import CourseFormDialog from '@/components/CourseFormDialog.vue'
+import DeleteDialog from '@/components/DeleteDialog.vue'
 
 const courseStore = useCourseStore()
-
 const { allCourses, isLoading } = storeToRefs(courseStore)
 
 const searchQuery = ref('')
 const selectedStatusFilter = ref(null)
-const isAddDialogOpen = ref(false)
 
-const newCourse = ref({
-  title: '',
-  description: '',
-  tags: [],
-})
-
-const status = ['active', 'inactive', 'draft']
-const availableTags = ref(['PHP', 'Laravel', 'Vue 3', 'Tailwind', 'Backend'])
+const isDialogOpen = ref(false)
+const selectedCourseData = ref(null)
 
 const filteredCourses = computed(() => {
   return allCourses.value.filter((course) => {
-    const matchesLevel = selectedStatusFilter.value
-      ? course.level === selectedStatusFilter.value
+    const matchesStatus = selectedStatusFilter.value
+      ? course.status === selectedStatusFilter.value
       : true
     const matchesSearch =
-      course.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      course.code.toLowerCase().includes(searchQuery.value.toLowerCase())
-    return matchesLevel && matchesSearch
+      get(course, 'title', '').toLowerCase().includes(searchQuery.value.toLowerCase())
+
+    return matchesStatus && matchesSearch
   })
 })
 
-const totalEnrolled = computed(() =>
-  allCourses.value.reduce((acc, c) => acc + c.enrolledStudents, 0)
-)
+const totalEnrolled = computed(() => 0)
 
-const handleCreateCourse = () => {
-  if (!newCourse.value.title) return
-
-  allCourses.value.unshift({
-    id: Date.now(),
-    ...newCourse.value,
-    enrolledStudents: 0,
-  })
-
-  newCourse.value = { code: '', title: '', description: '', tags: [] }
-  isAddDialogOpen.value = false
+const openEditDialog = (course) => {
+  selectedCourseData.value = {
+    id: course.id,
+    title: course.title,
+    description: course.description || '',
+    tags: Array.isArray(course.course_tags) ? [...course.course_tags] : [],
+    status: course.status || 'draft',
+    cooldownDays: course.reapply_cooldown_days || 0
+  }
+  isDialogOpen.value = true
 }
 
-const getLevelBadgeColor = (level: Course['level']) => {
+const handleFormSubmit = async (data) => {
+  if (data.id) {
+    // Update
+    await courseStore.editCourse(data.id, {
+      title: data.title,
+      description: data.description,
+      tags: data.tags,
+      status: data.status,
+      cooldownDays: data.cooldownDays
+    })
+  } else {
+    // Create
+    await courseStore.addCourse({
+      title: data.title,
+      description: data.description,
+      tags: data.tags,
+      cooldownDays: data.cooldownDays
+    })
+  }
+
+  selectedCourseData.value = null;
+  isDialogOpen.value = false
+}
+
+const isDeleteDialogOpen = ref(false)
+const courseToDelete = ref(null)
+const isDeleting = ref(false)
+
+const confirmDeleteCourse = (course) => {
+  courseToDelete.value = course
+  isDeleteDialogOpen.value = true
+}
+
+const handleExecuteDelete = async () => {
+  if (!courseToDelete.value) return
+
+  isDeleting.value = true
+  try {
+    await courseStore.removeCourse(courseToDelete.value.id)
+    isDeleteDialogOpen.value = false
+    courseToDelete.value = null
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+const getStatusBadgeColor = (level) => {
   switch (level) {
     case 'active':
-      return 'bg-blue-50 text-blue-700 border-blue-200'
-    case 'draft':
-      return 'bg-gray-50 text-gray-700 border-gray-200'
+      return 'bg-emerald-500'
     case 'inactive':
+      return 'bg-rose-500'
+    default:
+      return 'bg-slate-500'
+  }
+}
+
+const getStatusColor = (level) => {
+  switch (level) {
+    case 'active':
       return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+    case 'inactive':
+      return 'bg-rose-50 text-rose-700 border-rose-200'
+    default:
+      return 'bg-slate-50 text-slate-700 border-slate-200'
   }
 }
 
 onMounted(async () => {
-  if (!allCourses.value.length) await courseStore.fetchCourses();
+  if (!allCourses.value.length) await courseStore.fetchCourses()
 })
 </script>
 
@@ -75,7 +124,7 @@ onMounted(async () => {
           prepend-icon="mdi-plus"
           rounded="lg"
           class="capitalize text-white font-medium"
-          @click="isAddDialogOpen = true"
+          @click="isDialogOpen = true"
         >
           Add New Course
         </v-btn>
@@ -100,7 +149,7 @@ onMounted(async () => {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <v-text-field
             v-model="searchQuery"
-            placeholder="Search by code or title..."
+            placeholder="Search by title..."
             prepend-inner-icon="mdi-magnify"
             variant="outlined"
             density="compact"
@@ -140,111 +189,105 @@ onMounted(async () => {
         >
           <v-card
             flat
-            class="border border-slate-200 rounded-2xl bg-white flex flex-col justify-between hover:border-slate-300 transition-all"
+            class="border cursor-pointer border-slate-200 rounded-2xl bg-white flex flex-col justify-between max-h-100 hover:border-slate-300 transition-all"
           >
             <div class="p-5">
               <div class="flex items-center justify-between gap-2 mb-3">
-                <v-container class="flex p-0 gap-1">
-                  <v-chip 
-                    v-for="tag in course.course_tags" 
-                    size="small" 
-                    class="bg-muted text-muted-foreground px-4 font-medium"
-                  >
-                    {{ tag }}
-                  </v-chip>
-                </v-container>
-                  <span
+                <span 
+                  class="size-2 rounded-full transition-colors duration-200" 
+                  :class="getStatusBadgeColor(course.status || 'draft')"
+                />
+                <span
                   :class="[
                     'px-2.5 py-0.5 text-xs font-semibold rounded-full border',
-                    getLevelBadgeColor(course.status || 'draft')
+                    getStatusColor(course.status || 'draft')
                   ]"
                 >
                   {{ capitalize(course.status) || 'Draft' }}
                 </span>
               </div>
-
-              <h2 class="text-lg font-bold text-slate-900 mb-2">{{ course.title }}</h2>
+              <h2 class="text-xl font-bold text-slate-900">{{ course.title }}</h2>
               <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                 {{ course.description }}
               </p>
+
+              <v-container class="flex p-0 gap-1 mt-5">
+                <v-chip 
+                  v-for="tag in course.course_tags" 
+                  size="small" 
+                  class="bg-muted text-muted-foreground px-4 font-medium"
+                >
+                  {{ tag }}
+                </v-chip>
+              </v-container>
             </div>
 
             <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between rounded-b-2xl">
               <div class="flex items-center gap-1.5 text-xs text-slate-600">
                 <v-icon icon="mdi-account-group-outline" size="small" class="text-slate-400"></v-icon>
-                <span><strong class="text-slate-900 font-semibold">{{ course.enrolledStudents }}</strong> Enrolled</span>
+                <span><strong class="text-slate-900 font-semibold">{{ course.enrolledStudents || 0 }}</strong> Enrolled</span>
               </div>
+              
+              <v-menu location="bottom end">
+                <template #activator="{ props }">
+                  <v-btn
+                    v-bind="props"
+                    variant="text"
+                    size="small"
+                    icon
+                    class="text-slate-500 hover:text-slate-700"
+                  >
+                    <MoreVertical class="size-4" />
+                  </v-btn>
+                </template>
 
-              <v-btn icon="mdi-dots-vertical" variant="text" size="small" color="slate-500"></v-btn>
+                <v-list density="compact" class="py-1 rounded-lg border border-slate-100 shadow-lg">
+                  <v-list-item 
+                    value="update" 
+                    @click="openEditDialog(course)"
+                    class="hover:bg-slate-50 min-h-[36px]"
+                  >
+                    <template #prepend>
+                      <SquarePen class="size-4 mr-2 text-slate-500" />
+                    </template>
+                    <v-list-item-title class="text-xs font-medium text-slate-700">
+                      Update
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item 
+                    value="delete" 
+                    @click="confirmDeleteCourse(course)"
+                    class="hover:bg-rose-50 min-h-[36px]"
+                  >
+                    <template #prepend>
+                      <Trash2 class="size-4 mr-2 text-rose-500" />
+                    </template>
+                    <v-list-item-title class="text-xs font-medium text-rose-600">
+                      Delete
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </div>
           </v-card>
         </v-col>
       </v-row>
 
-      <v-dialog v-model="isAddDialogOpen" max-width="520px">
-        <v-card class="rounded-2xl p-2">
-          <v-card-title class="text-lg font-bold text-slate-900 pt-4 px-4">
-            Add New Course
-          </v-card-title>
+      <CourseFormDialog
+        v-model="isDialogOpen"
+        :initial-data="selectedCourseData"
+        :is-loading="isLoading"
+        @submit="handleFormSubmit"
+      />
 
-          <v-card-text class="space-y-4 px-4 py-2">
-            <v-text-field
-              v-model="newCourse.title"
-              label="Course Title"
-              variant="outlined"
-              density="comfortable"
-              rounded="lg"
-            ></v-text-field>
-
-            <v-textarea
-              v-model="newCourse.description"
-              label="Course Description"
-              variant="outlined"
-              density="comfortable"
-              rows="3"
-              rounded="lg"
-            ></v-textarea>
-
-            <v-combobox
-              v-model="newCourse.tags"
-              :items="availableTags"
-              variant="outlined"
-              chips
-              multiple
-              clearable
-              label="Course Tags"
-              density="comfortable"
-              rounded="lg"
-              hint="Type a tag and press Enter to add"
-              persistent-hint
-            >
-              <template #chip="{ props, item }">
-                <v-chip
-                  v-bind="props"
-                  size="small"
-                  class="text-capitalize font-medium"
-                  closable
-                >
-                  {{ item.raw }}
-                </v-chip>
-              </template>
-            </v-combobox>
-          </v-card-text>
-
-          <v-card-actions class="p-4 flex justify-end gap-2">
-            <v-btn variant="text" rounded="lg" @click="isAddDialogOpen = false">Cancel</v-btn>
-            <v-btn
-              color="emerald-700"
-              variant="elevated"
-              rounded="lg"
-              class="text-white capitalize"
-              @click="handleCreateCourse"
-            >
-              Create Course
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <DeleteDialog
+        v-model="isDeleteDialogOpen"
+        title="Delete Course"
+        :item-name="courseToDelete?.title"
+        :is-loading="isDeleting"
+        @confirm="handleExecuteDelete"
+      />
     </v-main>
   </v-layout>
 </template>

@@ -46,11 +46,7 @@ export const useCourseStore = defineStore('course', {
       try {
         const { data } = await getCourse(id)
 
-        if (!data.status) {
-          throw new Error(data.message || 'Failed to fetch course details')
-        }
-
-        this.currentCourse = data.data.course
+        this.currentCourse = data.course
       } catch (err) {
         console.log(err)
         this.error = err.response?.data?.message || err.message
@@ -66,12 +62,7 @@ export const useCourseStore = defineStore('course', {
       try {
         const { data } = await createCourse(payload)
 
-        if (!data.status) {
-          throw new Error(data.message || 'Failed to create course')
-        }
-
-        this.courses.push(data.data.course)
-        return data
+        this.courses.push(data)
       } catch (err) {
         console.log(err)
         this.error = err.response?.data?.message || err.message
@@ -87,20 +78,15 @@ export const useCourseStore = defineStore('course', {
       try {
         const { data } = await updateCourse(id, payload)
 
-        if (!data.status) {
-          throw new Error(data.message || 'Failed to update course')
-        }
-
         const index = this.courses.findIndex((c) => c.id === id)
         if (index !== -1) {
-          this.courses[index] = data.data.course
+          this.courses[index] = data
         }
 
         if (this.currentCourse?.id === id) {
-          this.currentCourse = data.data.course
+          this.currentCourse = data
         }
 
-        return data
       } catch (err) {
         console.log(err)
         this.error = err.response?.data?.message || err.message
@@ -115,10 +101,6 @@ export const useCourseStore = defineStore('course', {
 
       try {
         const { data } = await deleteCourse(id)
-
-        if (!data.status) {
-          throw new Error(data.message || 'Failed to delete course')
-        }
 
         this.courses = this.courses.filter((c) => c.id !== id)
         if (this.currentCourse?.id === id) {

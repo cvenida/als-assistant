@@ -12,6 +12,7 @@ class Course extends Model
         'title',
         'description',
         'user_id',
+        'status',
         'course_tags',
         'reapply_cooldown_days',
     ];

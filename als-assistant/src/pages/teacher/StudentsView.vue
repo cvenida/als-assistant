@@ -113,7 +113,6 @@ const enrolledHeaders = [
               density="comfortable"
               class="bg-transparent"
             >
-              <!-- Applicant Name & Email -->
               <template #item.name="{ item }">
                 <div>
                   <p class="font-medium text-slate-900 text-sm">{{ item.name }}</p>
@@ -121,14 +120,12 @@ const enrolledHeaders = [
                 </div>
               </template>
 
-              <!-- Requested Course -->
               <template #item.requestedCourseId="{ item }">
                 <span class="text-sm font-medium text-slate-700">
                   {{ getCourseTitle(item.requestedCourseId) }}
                 </span>
               </template>
 
-              <!-- Actions (Accept / Decline) -->
               <template #item.actions="{ item }">
                 <div class="flex items-center justify-end gap-2">
                   <v-btn

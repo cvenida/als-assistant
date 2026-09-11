@@ -95,7 +95,7 @@ const filteredNavItems = computed(() => {
       <!-- <v-list-item-subtitle class="text-xs text-muted-foreground">Dept.</v-list-item-subtitle> -->
     </v-list-item>
 
-    <v-list nav class="px-3 py-2 space-y-1">
+    <v-list density="compact" nav class="px-3 py-2 space-y-1">
       <v-list-item
         v-for="item in filteredNavItems"
         :key="item.label"
@@ -103,12 +103,23 @@ const filteredNavItems = computed(() => {
         :to="item.to"
         color="primary"
         rounded="lg"
-        class="hover:bg-gray-100 dark:hover:bg-gray-800"
+        class="hover:bg-gray-100 transition-colors"
       >
-        <template #prepend>
-          <component :is="item.icon" class="size-4 mr-3" />
+        <template #default="{ isActive }">
+          <div class="flex items-center w-full">
+            <component 
+              :is="item.icon" 
+              class="size-4 mr-3" 
+              :class="isActive ? 'text-primary' : 'text-slate-500'"
+            />
+            <v-list-item-title 
+              class="text-sm font-medium"
+              :class="isActive ? 'text-primary' : 'text-slate-500'"
+            >
+              {{ item.label }}
+            </v-list-item-title>
+          </div>
         </template>
-        <v-list-item-title class="text-sm font-medium">{{ item.label }}</v-list-item-title>
       </v-list-item>
     </v-list>
 

@@ -38,11 +38,21 @@ axios.interceptors.request.use(
 )
 
 axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  (response) => {
+    if (
+      response.data?.code === 401 ||
+      response.data?.message === 'Token has expired.'
+    ) {
+      const authStore = useAuthStore()
+      authStore.logout()
+      return Promise.reject(new Error(response.data.message || 'Token expired'))
+    }
+    return response
+  },
+  async (error) => {
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
-      authStore.clearSession()
+      await authStore.logout()
     }
     return Promise.reject(error)
   }

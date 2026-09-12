@@ -1,6 +1,6 @@
-# ALS Assistant Setup Guide
+# Klass Pilot Setup Guide
 
-This guide provides step-by-step instructions for setting up and running the **ALS Assistant** project in your local development environment.
+This guide provides step-by-step instructions for setting up and running the **Klass Pilot** project in your local development environment.
 
 ---
 
@@ -19,7 +19,7 @@ Before starting, make sure you have the following tools installed on your machin
 ### 1. Environment Configuration & Database Connection
 * Request the necessary `.env` configuration file from the system administrator.
 * Place the provided `.env` file inside the `admin-api` directory.
-* Open **DBeaver** and set up a new connection to the `als-assistant` database using the credentials specified in your `.env` file.
+* Open **DBeaver** and set up a new connection to the `klass-pilot` database using the credentials specified in your `.env` file.
 
 ---
 

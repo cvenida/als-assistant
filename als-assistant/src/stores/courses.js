@@ -46,7 +46,7 @@ export const useCourseStore = defineStore('course', {
       try {
         const { data } = await getCourse(id)
 
-        this.currentCourse = data.course
+        this.currentCourse = data
       } catch (err) {
         console.log(err)
         this.error = err.response?.data?.message || err.message

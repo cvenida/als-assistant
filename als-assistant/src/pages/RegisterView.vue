@@ -39,19 +39,20 @@ const handleSignup = async () => {
   }
 }
 </script>
+
 <template>
   <div class="w-full flex h-full">
-    <v-container class="hidden md:flex w-full md:w-5/12 bg-amber-100/50 p-8 flex-col justify-center items-center text-center border-amber-100">
-      <div class="mb-6 text-teal-700">
+    <v-container class="hidden md:flex w-full md:w-5/12 bg-emerald-500/10 p-8 flex-col justify-center items-center text-center border-r border-zinc-200 dark:border-zinc-800">
+      <div class="mb-6 text-primary">
         <v-icon size="100px">mdi-account-plus</v-icon>
       </div>
     </v-container>
 
-    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-      <h1 class="text-3xl font-semibold text-center text-teal-700 mb-1">
+    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center bg-surface">
+      <h1 class="text-3xl font-semibold text-center text-primary mb-1">
         Create an account
       </h1>
-      <p class="text-xs text-slate-500 text-center font-medium mb-6">
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 text-center font-medium mb-6">
         Fill in your details below to get started
       </p>
 
@@ -62,32 +63,35 @@ const handleSignup = async () => {
           density="compact"
           class="m-0 p-3"
         >
-          <div class="bg-slate-200 p-2 w-full rounded-2xl flex justify-center">
-            <div class="flex items-center mr-3" @click="userType = USER_TYPE.STUDENT">
+          <div class="bg-zinc-100 dark:bg-zinc-800 p-2 w-full rounded-2xl flex justify-center border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-center mr-3 cursor-pointer" @click="userType = USER_TYPE.STUDENT">
               <v-radio
                 :value="USER_TYPE.STUDENT"
                 density="compact"
-                class="flex-1 text-teal-700 justify-center rounded-xl transition-all"
+                color="primary"
+                class="flex-1 justify-center rounded-xl transition-all"
               ></v-radio>
-              <p class="text-sm text-slate-600 font-medium select-none">As a student</p>
+              <p class="text-sm text-zinc-700 dark:text-zinc-300 font-medium select-none">As a student</p>
             </div>
-            <div class="flex items-center mr-3" @click="userType = USER_TYPE.TEACHER">
+            <div class="flex items-center mr-3 cursor-pointer" @click="userType = USER_TYPE.TEACHER">
               <v-radio
                 :value="USER_TYPE.TEACHER"
                 density="compact"
-                class="flex-1 text-teal-700 justify-center rounded-xl transition-all"
+                color="primary"
+                class="flex-1 justify-center rounded-xl transition-all"
               ></v-radio>
-              <p class="text-sm text-slate-600 font-medium select-none">As a teacher</p>
+              <p class="text-sm text-zinc-700 dark:text-zinc-300 font-medium select-none">As a teacher</p>
             </div>
           </div>
         </v-radio-group>
+
         <v-row>
           <v-col cols="12" md="6">
             <v-text-field
               v-model="firstName"
               placeholder="First Name"
               prepend-inner-icon="mdi-account-outline"
-              variant="solo-filled"
+              variant="outlined"
               flat
               hide-details
               rounded="lg"
@@ -101,7 +105,7 @@ const handleSignup = async () => {
               v-model="lastName"
               placeholder="Last Name"
               prepend-inner-icon="mdi-account-outline"
-              variant="solo-filled"
+              variant="outlined"
               flat
               hide-details
               rounded="lg"
@@ -118,7 +122,7 @@ const handleSignup = async () => {
           placeholder="Email"
           prepend-inner-icon="mdi-email-outline"
           hide-details
-          variant="solo-filled"
+          variant="outlined"
           flat
           rounded="lg"
           density="comfortable"
@@ -131,7 +135,7 @@ const handleSignup = async () => {
           type="password"
           placeholder="Password"
           prepend-inner-icon="mdi-lock-outline"
-          variant="solo-filled"
+          variant="outlined"
           hide-details
           flat
           rounded="lg"
@@ -145,7 +149,7 @@ const handleSignup = async () => {
           type="password"
           placeholder="Confirm Password"
           prepend-inner-icon="mdi-lock-check-outline"
-          variant="solo-filled"
+          variant="outlined"
           hide-details
           flat
           rounded="lg"
@@ -153,12 +157,14 @@ const handleSignup = async () => {
           class="mb-4"
           :rules="[rules.required, rules.matchPassword]"
         ></v-text-field>
+
         <v-btn
           type="submit"
           block
           size="large"
+          color="primary"
           rounded="lg"
-          class="text-none bg-emerald-800 hover:bg-emerald-900 text-white font-weight-bold shadow-sm"
+          class="text-none font-weight-bold shadow-sm"
           :loading="authStore.isLoading"
           :disabled="!isFormValid"
         >
@@ -166,13 +172,12 @@ const handleSignup = async () => {
         </v-btn>
       </v-form>
 
-      <p class="text-xs text-center text-slate-500 mt-6">
+      <p class="text-xs text-center text-zinc-500 dark:text-zinc-400 mt-6">
         Already have an account? 
-        <router-link to="/login" class="text-teal-700 font-bold hover:underline">
+        <router-link to="/login" class="text-primary font-bold hover:underline">
           Log in
         </router-link>
       </p>
     </div>
   </div>
 </template>
-

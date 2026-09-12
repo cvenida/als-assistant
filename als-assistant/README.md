@@ -1,4 +1,4 @@
-# als-assistant
+# klass-pilot
 
 Scaffolded with Vuetify CLI.
 

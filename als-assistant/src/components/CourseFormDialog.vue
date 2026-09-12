@@ -80,8 +80,8 @@ const handleSubmit = () => {
     @update:model-value="emit('update:modelValue', $event)"
     max-width="520px"
   >
-    <v-card class="rounded-2xl p-2">
-      <v-card-title class="text-lg font-bold text-slate-900 pt-4 px-4">
+    <v-card class="rounded-2xl p-2 bg-surface border border-zinc-200 dark:border-zinc-800">
+      <v-card-title class="text-lg font-bold text-zinc-900 dark:text-zinc-100 pt-4 px-4">
         {{ isEditMode ? 'Update Course' : 'Add New Course' }}
       </v-card-title>
 
@@ -165,7 +165,7 @@ const handleSubmit = () => {
           variant="elevated"
           rounded="lg"
           :loading="isLoading"
-          class="text-white capitalize"
+          class="capitalize font-semibold"
           @click="handleSubmit"
         >
           {{ isEditMode ? 'Save Changes' : 'Create Course' }}

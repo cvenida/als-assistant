@@ -27,24 +27,17 @@ class CourseService
      */
     public function show($id)
     {
-        $application = CourseApplication::with(['course', 'student'])->find($id);
+        $course = Course::with(['activities.questions.options'])->find($id);
 
-        if (!$application) {
+        if (!$course) {
             return response()->json([
                 'status' => false,
-                'message' => 'Application not found.',
+                'message' => 'Course not found.',
                 'code' => 404,
-            ]);
+            ], 404);
         }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Application retrieved successfully.',
-            'code' => 200,
-            'data' => [
-                'application' => $application,
-            ],
-        ]);
+        return response()->json($course);
     }
     
     /**

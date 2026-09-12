@@ -9,7 +9,7 @@ const authStore = useAuthStore()
 const isFormValid = ref(false)
 const email = ref('')
 const password = ref('')
-const showPassword = ref(false);
+const showPassword = ref(false)
 
 const rules = {
   required: (v) => !!v || 'This field is required',
@@ -32,17 +32,17 @@ const handleLogin = async () => {
 
 <template>
   <div class="w-full flex h-full">
-    <v-container class="hidden md:flex w-full md:w-6/12 bg-amber-100/50 p-8 flex-col justify-center items-center text-center border-amber-100">
-      <div class="mb-6 text-teal-700">
+    <v-container class="hidden md:flex w-full md:w-5/12 bg-emerald-500/10 p-8 flex-col justify-center items-center text-center border-r border-zinc-200 dark:border-zinc-800">
+      <div class="mb-6 text-primary">
         <v-icon size="100px">mdi-login</v-icon>
       </div>
     </v-container>
 
-    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center">
-      <h1 class="text-3xl font-semibold text-center text-teal-700 mb-1">
+    <div class="w-full md:w-7/12 p-8 md:p-12 flex flex-col justify-center bg-surface">
+      <h1 class="text-3xl font-semibold text-center text-primary mb-1">
         Log in
       </h1>
-      <p class="text-xs text-slate-500 text-center font-medium mb-6">
+      <p class="text-xs text-zinc-500 dark:text-zinc-400 text-center font-medium mb-6">
         Welcome back! Please enter your details to continue
       </p>
 
@@ -52,7 +52,7 @@ const handleLogin = async () => {
           type="email"
           placeholder="Email"
           prepend-inner-icon="mdi-email-outline"
-          variant="solo-filled"
+          variant="outlined"
           flat
           rounded="lg"
           density="comfortable"
@@ -67,7 +67,7 @@ const handleLogin = async () => {
           prepend-inner-icon="mdi-lock-outline"
           :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
           @click:append-inner="showPassword = !showPassword"
-          variant="solo-filled"
+          variant="outlined"
           flat
           rounded="lg"
           density="comfortable"
@@ -79,8 +79,9 @@ const handleLogin = async () => {
           type="submit"
           block
           size="large"
+          color="primary"
           rounded="lg"
-          class="text-none bg-emerald-800 hover:bg-emerald-900 text-white font-weight-bold shadow-sm"
+          class="text-none font-weight-bold shadow-sm"
           :loading="authStore.isLoading"
           :disabled="!isFormValid"
         >
@@ -88,9 +89,9 @@ const handleLogin = async () => {
         </v-btn>
       </v-form>
 
-      <p class="text-xs text-center text-slate-500 mt-6">
+      <p class="text-xs text-center text-zinc-500 dark:text-zinc-400 mt-6">
         Don't have an account? 
-        <router-link to="/register" class="text-teal-700 font-bold hover:underline">
+        <router-link to="/register" class="text-primary font-bold hover:underline">
           Sign up
         </router-link>
       </p>

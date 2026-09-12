@@ -35,27 +35,6 @@ export const deleteCourse = async (id) => {
   return await axios.delete(`${VITE_API_BASE_URL}/courses/${id}`)
 }
 
-// Question Endpoints
-export const getQuestions = async () => {
-  return await axios.get(`${VITE_API_BASE_URL}/questions`)
-}
-
-export const getQuestion = async (id) => {
-  return await axios.get(`${VITE_API_BASE_URL}/questions/${id}`)
-}
-
-export const createQuestion = async (payload) => {
-  return await axios.post(`${VITE_API_BASE_URL}/questions`, payload)
-}
-
-export const updateQuestion = async (id, payload) => {
-  return await axios.put(`${VITE_API_BASE_URL}/questions/${id}`, payload)
-}
-
-export const deleteQuestion = async (id) => {
-  return await axios.delete(`${VITE_API_BASE_URL}/questions/${id}`)
-}
-
 // Course Application Endpoints
 export const getCourseApplications = async () => {
   return await axios.get(`${VITE_API_BASE_URL}/course-applications`)

@@ -9,34 +9,6 @@ use Illuminate\Support\Facades\Validator;
 
 class QuestionService
 {
-    /**
-     * Get all questions.
-     * 
-     */
-    public function index()
-    {
-        $questions = Question::with(['activity', 'options'])->get();
-
-        return response()->json($questions);
-    }
-
-    /**
-     * Get a specific question by ID.
-     * 
-     */
-    public function show($id)
-    {
-        $question = Question::with(['activity', 'options'])->find($id);
-
-        if (!$question) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Question not found.',
-            ], 404);
-        }
-
-        return response()->json($question);
-    }
 
     /**
      * Handle question creation along with options.

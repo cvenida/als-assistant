@@ -2,9 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/pages/LoginView.vue'
 import Register from '@/pages/RegisterView.vue'
 import Dashboard from '@/pages/teacher/DashboardView.vue'
+import Settings from '@/pages/SettingsView.vue'
 import StudentDashboard from '@/pages/student/DashboardView.vue'
 import StudentsView from '@/pages/teacher/StudentsView.vue'
-import CoursesView from '@/pages/teacher/CoursesView.vue'
+import CoursesView from '@/pages/teacher/courses/CoursesView.vue'
+import CourseInfoView from '@/pages/teacher/courses/CourseInfoView.vue'
+import ActivityFormView from '@/pages/teacher/courses/ActivityFormView.vue'
 import { USER_TYPE } from '@/shared/constants'
 import { useAuthStore } from '@/stores/auth'
 
@@ -49,6 +52,19 @@ const router = createRouter({
         next()
       },
     },
+    {
+      path: '/settings',
+      name: 'settings',
+      meta: { title: 'Settings', description: 'Manage your account preference, and security options.'},
+      component: Settings,
+      beforeEnter: (to, from, next) => {
+        const authStore = useAuthStore()
+        if (!authStore.isAuthenticated) {
+          return next('/login')
+        }
+        next()
+      },
+    },
 
     // Teacher Routes Parent (Single Checker)
     {
@@ -75,12 +91,29 @@ const router = createRouter({
           component: StudentsView,
           meta: { title: 'Students', description: 'Manage & track student enrollments'},
         },
+        // Courses 
         {
           path: 'courses',
           name: 'teacher-courses',
           component: CoursesView,
           meta: { title: 'Courses', description: 'Manage learning programs' },
         },
+        {
+          path: 'courses/:id',
+          name: 'course-info',
+          component: CourseInfoView,
+          meta: { title: 'Course', description: '' }
+        },
+        {
+          path: 'courses/:id/activities/create',
+          name: 'activity-create',
+          component: ActivityFormView
+        },
+        {
+          path: 'courses/:id/activities/:activityId/edit',
+          name: 'activity-edit',
+          component: ActivityFormView
+        }
       ],
     },
 

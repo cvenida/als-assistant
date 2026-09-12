@@ -172,11 +172,11 @@ onMounted(async () => {
             rounded="lg"
           >
             <template #selection="{ item }">
-              <span class="capitalize">{{ capitalize(item.value) }}</span>
+              <span class="capitalize">{{ capitalize(item) }}</span>
             </template>
 
             <template #item="{ item, props }">
-              <v-list-item v-bind="props" :title="capitalize(item.value)" class="capitalize" />
+              <v-list-item v-bind="props" :title="capitalize(item)" class="capitalize" />
             </template>
           </v-select>
         </div>

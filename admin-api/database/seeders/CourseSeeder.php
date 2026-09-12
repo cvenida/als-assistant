@@ -14,7 +14,7 @@ class CourseSeeder extends Seeder
                 'title' => 'Introduction to Web Development',
                 'description' => 'Learn the basics of HTML, CSS, and JavaScript.',
                 'user_id' => 1,
-                'course_tags' => ['web', 'beginner', 'frontend'],
+                'course_tags' => ['web', 'beginner', 'frontend', 'fullstack'],
                 'status' => 'active',
                 'reapply_cooldown_days' => 0,
             ],

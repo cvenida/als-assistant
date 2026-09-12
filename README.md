@@ -29,7 +29,7 @@ Open your terminal (or Docker Terminal) and navigate to the `admin-api` folder:
 
 ```bash
 # Navigate to the API directory
-cd admin-api
+cd /path-to-project/admin-api
 
 # Start the Docker containers in detached mode
 docker compose up -d
